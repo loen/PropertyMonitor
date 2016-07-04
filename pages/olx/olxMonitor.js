@@ -1,5 +1,6 @@
 var request = require('request');
 var cheerio = require('cheerio');
+var Promise = require('bluebird');
 var dao = require('../../dao/redisDao');
 
 var OLX_KEY='OLX';
@@ -9,18 +10,24 @@ function getProperties(url, res){
     request(url, function(error, response, html){
         if(!error){
             var $ = cheerio.load(html);
-            var newProperties = [];
+            var promises = [];
             var len = $('#offers_table').find('td.offer').length;
+            console.log('items count:' +  len);
             $('#offers_table').find('td.offer').each(function(i,elem){
                 var property = { id: '', name: '', url: ''};
                 property.id = $(elem).find('table').attr('data-id');
                 property.name = $(elem).find('h3 strong').text();
                 property.url = $(elem).find('h3 a').attr('href');
-                if(dao.saveProperty(OLX_KEY+ '-' + property.id, property)){
-                    newProperties.push(property);
-                }
+                var promise = dao.saveProperty(OLX_KEY+ '-' + property.id, property);
+                promises.push(promise);
             });
-            res.send(newProperties);
+
+            Promise.all(promises).then(function(results){
+                var newProperties = results.filter(function(elem){
+                    return elem;
+                });
+                res.send(newProperties);
+            });
         }
     });
 }
