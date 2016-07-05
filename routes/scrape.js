@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var olxMonitor = require('../pages/olx/olxMonitor')
+var olxMonitor = require('../pages/olx/olxMonitor');
 
 
 router.get('/', function(req, res, next) {
@@ -9,6 +9,7 @@ router.get('/', function(req, res, next) {
         description: 'Mieszkania Kraków Dębniki'
     };
     olxMonitor.getProperties(olxSettings, res);
+    res.send('OK');
 });
 
 module.exports = router;

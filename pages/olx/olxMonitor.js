@@ -6,7 +6,7 @@ var email = require('../../email/emailSender');
 
 var OLX_KEY='OLX';
 
-function getProperties(olxSettings, res){
+function getProperties(olxSettings){
 
     request(olxSettings.url, function(error, response, html){
         if(!error){
@@ -29,7 +29,7 @@ function getProperties(olxSettings, res){
                 });
                 var report = prepareReport(newProperties, olxSettings.description);
                 email.sendMail(report);
-                res.send(newProperties);
+                //res.send(newProperties);
             });
         }
     });

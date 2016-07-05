@@ -1,6 +1,5 @@
 var express = require('express');
 var path = require('path');
-//var hbs = require('hbs');
 var routes = require('./routes/index');
 var scrape = require('./routes/scrape');
 
