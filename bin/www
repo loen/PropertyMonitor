@@ -33,7 +33,7 @@ server.on('listening', onListening);
 /**
  * Add cron job to monitor real estate
  */
-new CronJob('00 00 22 * * *', function() {
+new CronJob('00 06 22 * * *', function() {
   var olxSettings = {
     url: 'http://olx.pl/nieruchomosci/mieszkania/sprzedaz/krakow/?search%5Bfilter_enum_rooms%5D%5B0%5D=four&search%5Bfilter_enum_rooms%5D%5B1%5D=three&search%5Bdistrict_id%5D=259',
     description: 'Mieszkania Kraków Bronowice 3 i wiecej pokoi'

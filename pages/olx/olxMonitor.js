@@ -43,6 +43,7 @@ function prepareReport(newProperties, title){
             '<td><a href=\'' + prop.url +'\'>Link do oferty</a></td></tr>';
     });
     payload = payload + '</table>';
+    return payload;
 }
 
 exports.getProperties = getProperties;
