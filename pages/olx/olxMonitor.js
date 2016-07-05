@@ -2,12 +2,13 @@ var request = require('request');
 var cheerio = require('cheerio');
 var Promise = require('bluebird');
 var dao = require('../../dao/redisDao');
+var email = require('../../email/emailSender');
 
 var OLX_KEY='OLX';
 
-function getProperties(url, res){
+function getProperties(olxSettings, res){
 
-    request(url, function(error, response, html){
+    request(olxSettings.url, function(error, response, html){
         if(!error){
             var $ = cheerio.load(html);
             var promises = [];
@@ -26,10 +27,22 @@ function getProperties(url, res){
                 var newProperties = results.filter(function(elem){
                     return elem;
                 });
+                var report = prepareReport(newProperties, olxSettings.description);
+                email.sendMail(report);
                 res.send(newProperties);
             });
         }
     });
+}
+
+function prepareReport(newProperties, title){
+    var payload = title + '<br><br><table>';
+    newProperties.forEach(function(prop){
+        payload = payload +
+            '<tr><td><b>' + prop.name + '</b></td>' +
+            '<td><a href=\'' + prop.url +'\'>Link do oferty</a></td></tr>';
+    });
+    payload = payload + '</table>';
 }
 
 exports.getProperties = getProperties;
