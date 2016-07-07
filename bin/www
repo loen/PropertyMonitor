@@ -8,6 +8,9 @@ var app = require('../app');
 var http = require('http');
 var olxMonitor = require('../pages/olx/olxMonitor');
 var CronJob = require('cron').CronJob;
+var winston = require('winston');
+
+winston.add(winston.transports.File, { filename: 'propertyMonitor.log' });
 
 /**
  * Get port from environment and store in Express.
@@ -33,7 +36,8 @@ server.on('listening', onListening);
 /**
  * Add cron job to monitor real estate
  */
-new CronJob('00 06 22 * * *', function() {
+new CronJob('* 0-59 * * *', function() {
+  winston.info('Starting to scrape new announcement');
   var olxSettings = {
     url: 'http://olx.pl/nieruchomosci/mieszkania/sprzedaz/krakow/?search%5Bfilter_enum_rooms%5D%5B0%5D=four&search%5Bfilter_enum_rooms%5D%5B1%5D=three&search%5Bdistrict_id%5D=259',
     description: 'Mieszkania Kraków Bronowice 3 i wiecej pokoi'
@@ -77,11 +81,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      winston.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      winston.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -99,6 +103,7 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   console.log('Listening on ' + bind);
+  winston.log('Listening on ' + bind);
 }
 
 

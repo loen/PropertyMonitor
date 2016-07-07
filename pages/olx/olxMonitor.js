@@ -1,6 +1,7 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var Promise = require('bluebird');
+var winston = require('winston');
 var dao = require('../../dao/redisDao');
 var email = require('../../email/emailSender');
 
@@ -13,7 +14,7 @@ function getProperties(olxSettings){
             var $ = cheerio.load(html);
             var promises = [];
             var len = $('#offers_table').find('td.offer').length;
-            console.log('items count:' +  len);
+            winston.info('items count:' +  len);
             $('#offers_table').find('td.offer').each(function(i,elem){
                 var property = { id: '', name: '', url: ''};
                 property.id = $(elem).find('table').attr('data-id');
@@ -28,6 +29,7 @@ function getProperties(olxSettings){
                     return elem;
                 });
                 var report = prepareReport(newProperties, olxSettings.description);
+                winston.info("We've found following announcements: " + report);
                 email.sendMail(report);
                 //res.send(newProperties);
             });

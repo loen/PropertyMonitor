@@ -1,4 +1,5 @@
 var nodemailer = require('nodemailer');
+var winston = require('winston');
 
 var email = process.env.EMAIL;
 var password = process.env.EMAIL_PASSWORD;
@@ -16,9 +17,9 @@ function sendMail(payload){
 // send mail with defined transport object
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
-            return console.log(error);
+            return winston.error(error);
         }
-        console.log('Message sent: ' + info.response);
+        winston.info('Message sent: ' + info.response);
     });
 }
 
