@@ -36,7 +36,7 @@ server.on('listening', onListening);
 /**
  * Add cron job to monitor real estate
  */
-new CronJob('00 21 * * *', function() {
+new CronJob('0 39 22 * * *', function() {
   winston.info('Starting to scrape new announcement');
   var olxSettings = {
     url: 'http://olx.pl/nieruchomosci/mieszkania/sprzedaz/krakow/?search%5Bfilter_enum_rooms%5D%5B0%5D=four&search%5Bfilter_enum_rooms%5D%5B1%5D=three&search%5Bdistrict_id%5D=259',
