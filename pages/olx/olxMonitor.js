@@ -7,7 +7,7 @@ var email = require('../../email/emailSender');
 
 var OLX_KEY='OLX';
 
-function getProperties(olxSettings){
+function getProperties(olxSettings, res){
 
     request(olxSettings.url, function(error, response, html){
         if(!error){
@@ -31,7 +31,7 @@ function getProperties(olxSettings){
                 var report = prepareReport(newProperties, olxSettings.description);
                 winston.info("We've found following announcements: " + report);
                 email.sendMail(report);
-                //res.send(newProperties);
+                res.send(newProperties);
             });
         }
     });

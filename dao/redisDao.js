@@ -1,9 +1,14 @@
 var redis = require("redis");
 var bluebird = require("bluebird");
 var winston = require("winston");
+var config = require('../config/config');
+
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
-var client = redis.createClient(6379, '192.168.0.19');
+
+var redisConf = config.getSetting('redis');
+winston.info('Trying to connect redis %s:%s', redisConf.host, redisConf.port);
+var client = redis.createClient(redisConf.port, redisConf.host);
 
 client.on('connect', function() {
     winston.info('Connected to REDIS');
@@ -12,7 +17,7 @@ client.on('connect', function() {
 function saveProperty(key, property){
     return client.existsAsync(key).then(function(exists) {
         if(exists){
-            console.log('Key already exist ' + key);
+            winston.error('Key already exist ' + key);
             return false;
         } else if(!exists) {
             client.set(key, JSON.stringify(property));
@@ -20,5 +25,6 @@ function saveProperty(key, property){
         };
     });
 }
+
 exports.saveProperty = saveProperty;
 

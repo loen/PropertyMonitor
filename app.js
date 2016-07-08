@@ -1,5 +1,15 @@
 var express = require('express');
 var path = require('path');
+var config = require('./config/config');
+var winston = require('winston');
+winston.add(winston.transports.File, { filename: 'propertyMonitor.log' });
+
+/**
+ *  Read app config
+ */
+config.readConfig();
+
+
 var routes = require('./routes/index');
 var scrape = require('./routes/scrape');
 

@@ -1,16 +1,17 @@
 var nodemailer = require('nodemailer');
 var winston = require('winston');
+var config = require('../config/config');
 
-var email = process.env.EMAIL;
-var password = process.env.EMAIL_PASSWORD;
+var emailConf = config.getSetting('email');
 
-var transporter = nodemailer.createTransport('smtps://' + email + ':' + password + '@smtp.gmail.com');
+var transporter =
+    nodemailer.createTransport('smtps://' + emailConf.email + ':' + emailConf.email_password + '@smtp.gmail.com');
 
 function sendMail(payload){
     var mailOptions = {
-        from: 'Real estate <propkrakow@gmail.com>',
-        to: 'andrzej.pozlutko@gmail.com',
-        subject: 'Hej Ho Mamy nowe oferty',
+        from: emailConf.from,
+        to: emailConf.recipients,
+        subject: emailConf.subject,
         html: payload
     };
 
