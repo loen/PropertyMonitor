@@ -58,9 +58,6 @@ function getProperties(olxSettings, res){
            return false;
         });
 
-    promise.then(function(r) {
-        res.send("OK");
-    });
 }
 
 function getPropertiesFromSite(siteUrl, siteNum){
