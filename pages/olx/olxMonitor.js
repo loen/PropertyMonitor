@@ -28,7 +28,7 @@ function getProperties(olxSettings, res){
                 var newProperties = results.filter(function(elem){
                     return elem;
                 });
-                var report = prepareReport(newProperties, olxSettings.description);
+                var report = email.prepareReport(newProperties, olxSettings.description);
                 winston.info("We've found following announcements: " + report);
                 email.sendMail(report);
                 res.send(newProperties);
@@ -37,15 +37,5 @@ function getProperties(olxSettings, res){
     });
 }
 
-function prepareReport(newProperties, title){
-    var payload = title + '<br><br><table>';
-    newProperties.forEach(function(prop){
-        payload = payload +
-            '<tr><td><b>' + prop.name + '</b></td>' +
-            '<td><a href=\'' + prop.url +'\'>Link do oferty</a></td></tr>';
-    });
-    payload = payload + '</table>';
-    return payload;
-}
 
 exports.getProperties = getProperties;

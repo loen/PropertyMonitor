@@ -24,4 +24,16 @@ function sendMail(payload){
     });
 }
 
+function prepareReport(newProperties, title){
+    var payload = title + '<br><br><table>';
+    newProperties.forEach(function(prop){
+        payload = payload +
+            '<tr><td><b>' + prop.name + '</b></td>' +
+            '<td><a href=\'' + prop.url +'\'>Link do oferty</a></td></tr>';
+    });
+    payload = payload + '</table>';
+    return payload;
+}
+
 exports.sendMail = sendMail;
+exports.prepareReport = prepareReport;

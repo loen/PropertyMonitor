@@ -15,6 +15,7 @@
     "redis": "~2.6.2",
     "request": "~2.72.0",
     "request-promise": "^4.0.1",
+    "underscore": "^1.8.3",
     "winston": "^2.2.0"
   }
 }

@@ -17,6 +17,14 @@
         "description": "Mieszkania Kraków Bronowice 3 i wiecej pokoi"
       }
     ]
+  },
+  "otodom": {
+    "categories": [
+      {
+        "url": "https://otodom.pl/sprzedaz/mieszkanie/krakow/?search%5Bfilter_float_price%3Afrom%5D=50000&search%5Bfilter_float_price%3Ato%5D=600000&search%5Bfilter_float_m%3Afrom%5D=50&search%5Bfilter_float_m%3Ato%5D=80&search%5Bfilter_enum_rooms_num%5D%5B0%5D=3&search%5Bfilter_enum_rooms_num%5D%5B1%5D=4&search%5Bfilter_enum_rooms_num%5D%5B2%5D=5&search%5Bfilter_enum_rooms_num%5D%5B3%5D=6&search%5Bfilter_enum_rooms_num%5D%5B4%5D=7&search%5Bdescription%5D=1&search%5Bdist%5D=0&search%5Bdistrict_id%5D=57&nrAdsPerPage=72",
+        "description": "Mieszkania Kraków Dêbniki 50 000-600 000, 50-80m2 3 i wiêcej pokoi"
+      }
+    ]
   }
 
 }

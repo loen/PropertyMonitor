@@ -12,7 +12,11 @@ router.get('/', function(req, res, next) {
     winston.info('using following data');
     winston.info(olxSettings);
     olxMonitor.getProperties(olxSettings, res);
-    //otoDomMonitor.getProperties(olxSettings, res);
+    var otoDomSettings = config.getSetting('otodom').categories[0];
+    winston.info('using following data for oto dom');
+    winston.info(otoDomSettings);
+    otoDomMonitor.getProperties(otoDomSettings, res);
+;
 });
 
 module.exports = router;
