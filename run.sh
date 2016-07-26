@@ -1,2 +1,2 @@
 #!/bin/bash
-nohup node ./bin/www > /dev/null 2>&1 &
+nohup node ./bin/www > /var/services/homes/paczur/docs/PropertyMonitor/logs.logs 2>&1 &
