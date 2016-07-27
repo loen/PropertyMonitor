@@ -76,9 +76,10 @@ function getPropertiesFromSite(siteUrl, siteNum){
             var properties = [];
             $('div.col-md-content').find('article').each(function(i,elem){
                 var property = { id: '', name: '', url: ''};
-                property.id = $(elem).attr('data-item-id');
                 property.name = $(elem).find('span.offer-item-title').text();
                 property.url = $(elem).attr('data-url');
+                property.id = $(elem).attr('data-url').replace('https://otodom.pl/oferta/', '');
+                property.id = property.id.substring(0, property.id.indexOf('.html#'));
                 winston.info('found announcement %s', JSON.stringify(property));
                 properties.push(property);
             });
