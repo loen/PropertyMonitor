@@ -8,10 +8,10 @@ var email = require('../../email/emailSender');
 
 var OTO_DOM_KEY='OTO_DOM';
 var PAGE_TAG = '&page=';
-//var URI =  'https://otodom.pl/sprzedaz/mieszkanie/krakow/?search%5Bfilter_float_price%3Afrom%5D=50000&search%5Bfilter_float_price%3Ato%5D=600000&search%5Bfilter_float_m%3Afrom%5D=50&search%5Bfilter_float_m%3Ato%5D=80&search%5Bfilter_enum_rooms_num%5D%5B0%5D=3&search%5Bfilter_enum_rooms_num%5D%5B1%5D=4&search%5Bfilter_enum_rooms_num%5D%5B2%5D=5&search%5Bfilter_enum_rooms_num%5D%5B3%5D=6&search%5Bfilter_enum_rooms_num%5D%5B4%5D=7&search%5Bdescription%5D=1&search%5Bdist%5D=0&search%5Bdistrict_id%5D=57&nrAdsPerPage=72';
+//var URI = 'https://otodom.pl/sprzedaz/mieszkanie/krakow/?search%5Bfilter_float_price%3Afrom%5D=50000&search%5Bfilter_float_price%3Ato%5D=600000&search%5Bfilter_float_m%3Afrom%5D=50&search%5Bfilter_float_m%3Ato%5D=80&search%5Bfilter_enum_rooms_num%5D%5B0%5D=3&search%5Bfilter_enum_rooms_num%5D%5B1%5D=4&search%5Bfilter_enum_rooms_num%5D%5B2%5D=5&search%5Bfilter_enum_rooms_num%5D%5B3%5D=6&search%5Bfilter_enum_rooms_num%5D%5B4%5D=7&search%5Bdescription%5D=1&search%5Bdist%5D=0&search%5Bdistrict_id%5D=57&nrAdsPerPage=72';
 
 
-function getProperties(olxSettings, res){
+function getProperties(olxSettings){
     var options = {
         uri: olxSettings.url,
         transform: function (body) {
@@ -19,7 +19,7 @@ function getProperties(olxSettings, res){
         }
     };
 
-    var promise = rp(options)
+    var property = rp(options)
         .then(function ($) {
             var numOfSites = $('#pagerForm').find('ul.pager').find('strong.current').text();
             winston.info('Oto Dom found %s sites ', numOfSites);
@@ -30,34 +30,38 @@ function getProperties(olxSettings, res){
                 var siteAnnouncement = getPropertiesFromSite(options.uri, site);
                 sites.push(siteAnnouncement);
             }
-
-            Promise.all(sites).then(function(results){
-                var newProperties = results.filter(function(elem){
+            return Promise.all(sites);
+        }).then(function(results) {
+                var newProperties = results.filter(function (elem) {
                     return elem;
                 });
                 var allNewProperties = _.flatten(newProperties);
                 var savedProperties = [];
-                allNewProperties.forEach(function(prop){
-                  var newProp =  dao.saveProperty(OTO_DOM_KEY+ '-' + prop.id, prop);
-                  savedProperties.push(newProp);
+                allNewProperties.forEach(function (prop) {
+                    var newProp = dao.saveProperty(OTO_DOM_KEY + '-' + prop.id, prop);
+                    savedProperties.push(newProp);
                 });
-                Promise.all(savedProperties).then(function(results){
-                    var changedProperties = results.filter(function(elem){
-                        return elem;
-                    });
-                    var report = email.prepareReport(changedProperties, olxSettings.description);
-                    winston.info("We've found following announcements: " + report);
-                    email.sendMail(report);
-                });
-                return newProperties;
-            });
-        })
-        .catch(function (err) {
-           winston.error('error during scraping OTO DOM');
-           winston.error(err);
-           return false;
-        });
+            return Promise.all(savedProperties);
+        }).then(function(results){
+                 var changedProperties = results.filter(function(elem){
+                         return elem;
+                 });
+                 var report = email.prepareReport(changedProperties, olxSettings.description);
+                 winston.info("We've found following announcements: " + report);
+                 email.sendMail(report);
 
+            var changedPropertiesReport = {
+                description: olxSettings.description,
+                changedProperties: changedProperties
+            };
+             return changedPropertiesReport;
+          })
+          .catch(function (err) {
+              winston.error('error during scraping OTO DOM');
+              winston.error(err);
+              return false;
+           });
+    return property;
 }
 
 function getPropertiesFromSite(siteUrl, siteNum){

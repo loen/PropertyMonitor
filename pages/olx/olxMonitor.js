@@ -1,4 +1,4 @@
-var request = require('request');
+var rp = require('request-promise');
 var cheerio = require('cheerio');
 var Promise = require('bluebird');
 var winston = require('winston');
@@ -7,11 +7,17 @@ var email = require('../../email/emailSender');
 
 var OLX_KEY='OLX';
 
-function getProperties(olxSettings, res){
+function getProperties(olxSettings){
 
-    request(olxSettings.url, function(error, response, html){
-        if(!error){
-            var $ = cheerio.load(html);
+    var options = {
+        uri: olxSettings.url,
+        transform: function (body) {
+            return cheerio.load(body);
+        }
+    };
+
+    var property =  rp(options)
+        .then(function ($) {
             var promises = [];
             var len = $('#offers_table').find('td.offer').length;
             winston.info('items count:' +  len);
@@ -24,17 +30,25 @@ function getProperties(olxSettings, res){
                 promises.push(promise);
             });
 
-            Promise.all(promises).then(function(results){
-                var newProperties = results.filter(function(elem){
-                    return elem;
-                });
-                var report = email.prepareReport(newProperties, olxSettings.description);
-                winston.info("We've found following announcements: " + report);
-                email.sendMail(report);
-                res.send(newProperties);
-            });
-        }
-    });
+            return Promise.all(promises);
+    }).then(function(results){
+        var newProperties = results.filter(function(elem){
+            return elem;
+        });
+        var report = email.prepareReport(newProperties, olxSettings.description);
+        winston.info("We've found following announcements: " + report);
+        email.sendMail(report);
+        var changedPropertiesReport = {
+            description: olxSettings.description,
+            changedProperties: newProperties
+        };
+        return changedPropertiesReport;
+    }).catch(function (err) {
+            winston.error('error during scraping OLX');
+            winston.error(err);
+            return false;
+        });
+    return property;
 }
 
 
